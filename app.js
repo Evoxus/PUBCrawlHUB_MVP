@@ -191,26 +191,22 @@ function getBarsFromOB(cityQ, stateQ, limitQ = 20) {
   const url = baseURL + '?' + queryString;
 
   fetch(url)
-    .then(response => {
-      if (response.ok) {
-        STORE.state = "RESULTS";
-        return response.json();
-      }
-      throw new Error(response.statusText)
-    })
-    .then(responseJson => {
-      let geocodedResults = filterResultsWithoutLatLon(responseJson);
-      STORE.brewResults = geocodedResults;
-      let missingResults = false;
-      if (geocodedResults.length !== responseJson.length) {
-        missingResults = true;
-      }
-      determineView(STORE.state, STORE.brewResults, missingResults);
-    })
-    .catch(err => {
-      STORE.state = "BAD RESULTS";
-      determineView(STORE.state, err)
-    })
+  .then(response => {
+    if (response.ok) {
+      STORE.state = "RESULTS";
+      return response.json();
+    }
+    throw new Error(response.statusText)
+  })
+  .then(responseJson => { 
+    let geocodedResults = filterResultsWithoutLatLon(responseJson);
+    STORE.brewResults = geocodedResults;
+    determineView(STORE.state, geocodedResults);
+  })
+  .catch(err => {
+    STORE.state = "BAD RESULTS";
+    determineView(STORE.state, err)
+  })
 }
 
 function filterResultsWithoutLatLon(res) {
